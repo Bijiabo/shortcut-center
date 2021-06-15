@@ -1,7 +1,7 @@
 {
-  "name": "shortcut-center",
+  "name": "@bijiabo/shortcut-center",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
     "build": "npm test && tsc",
@@ -25,5 +25,6 @@
     "expect.js": "^0.3.1",
     "path-to-regexp": "^6.2.0",
     "uuid": "^8.3.2"
-  }
+  },
+  "files": ["dist", "README.md"]
 }
