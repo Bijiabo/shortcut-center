@@ -1,5 +1,6 @@
 import ShortcutCenterBaseClass, {
   IObserverContext,
+  IObserverOptions,
   TCallback,
 } from "./baseClass";
 import { v4 as generateUUID } from "uuid";
@@ -7,7 +8,11 @@ import chalk from "chalk";
 import { match, pathToRegexp, Key } from "path-to-regexp";
 
 class ShortcutCenter extends ShortcutCenterBaseClass {
-  private observers: { [key: string]: { [key: string]: TCallback } } = {};
+  private observers: {
+    [key: string]: {
+      [key: string]: { callback: TCallback; options?: IObserverOptions };
+    };
+  } = {};
   private shortcutRules: {
     [key: string]: { matchRule: RegExp; keys: Array<Key> };
   } = {};
@@ -18,11 +23,15 @@ class ShortcutCenter extends ShortcutCenterBaseClass {
 
   // public functions
 
-  public addObserver(rule: string, callback: TCallback) {
+  public addObserver(
+    rule: string,
+    callback: TCallback,
+    options?: IObserverOptions
+  ) {
     this.addRuleIndexIfNeeded(rule);
 
     const observerId = generateUUID();
-    this.observers[rule][observerId] = callback;
+    this.observers[rule][observerId] = { callback, options: options };
     return {
       remove: () => {
         delete this.observers[rule][observerId];
@@ -70,8 +79,14 @@ class ShortcutCenter extends ShortcutCenterBaseClass {
           );
         }
         const observerGroup = this.observers[key];
-        for (let [_, callback] of Object.entries(observerGroup)) {
+        for (let [observerId, { callback, options }] of Object.entries(
+          observerGroup
+        )) {
           callback(observerExecuteContext);
+          if (options && options.once) {
+              console.log('###remove observer', observerId)
+            delete observerGroup[observerId];
+          }
         }
         break;
       }

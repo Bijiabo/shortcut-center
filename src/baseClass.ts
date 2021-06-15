@@ -2,6 +2,10 @@ export interface IObserverContext {
   params: { [key: string]: string };
 }
 
+export interface IObserverOptions {
+  once?: boolean;
+}
+
 export type TAddObserverResult = {
   remove: () => void;
 };
@@ -11,7 +15,8 @@ abstract class ShortcutCenterBaseClass {
   private _devMode_: boolean = false;
   public abstract addObserver(
     rule: string,
-    callback: TCallback
+    callback: TCallback,
+    options?: IObserverOptions
   ): TAddObserverResult;
   public abstract removeAllObservers(): void;
   public abstract execute(shortcutCommand: string): void;
